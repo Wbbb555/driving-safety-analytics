@@ -8,23 +8,27 @@
 
 > **数据说明**：仓库里所有数据都是**脚本生成的合成数据**，车号是虚构的，数字不代表任何真实车队。原始比赛数据涉及企业车辆行驶轨迹与司机行为，受保密条款约束，不能公开。合成数据只保留结构（500 台车 × 61 天、8 个指标、同样的分表形态），让方法可以端到端跑通。
 
+![评分卡十分位出险率](docs/figures/task2_decile.png)
+
 ---
 
-## 一分钟跑通
+## 两分钟跑通
+
+实测总耗时 **91 秒**（Windows 11 / Python 3.12.14，单核，含所有脚本）。
 
 ```bash
 pip install -r requirements.txt
 
-# 1) 生成合成数据（约 30 秒，输出到 data/synthetic/）
+# 1) 生成合成数据（约 15 秒，输出到 data/synthetic/）
 python scripts/generate_synthetic.py
 
-# 2) 复现五个方法论陷阱的量化偏差（约 30 秒）
+# 2) 复现五个方法论陷阱的量化偏差（约 28 秒）
 python scripts/demo_traps.py
 
-# 3) 任务一：事故风险预测（按车分组交叉验证）
+# 3) 任务一：事故风险预测（按车分组交叉验证，约 8 秒）
 python src/task1/run_task1.py
 
-# 4) 任务二：可解释安全评分卡
+# 4) 任务二：可解释安全评分卡（约 26 秒）
 python src/task2/run_task2.py
 
 # 5) 不变量测试（17 项，约 3 秒）
@@ -38,7 +42,11 @@ python scripts/demo_traps.py --json outputs/metrics.json
 python scripts/make_figures.py
 ```
 
-不需要改路径。数据目录优先级：命令行 `--data` > 环境变量 `DSA_DATA_DIR` > 仓库内 `data/synthetic`。四个主脚本都支持 `--data`。
+不需要改路径。数据目录优先级：命令行 `--data` > 环境变量 `DSA_DATA_DIR` > 仓库内 `data/synthetic`。
+
+支持 `--data` 的脚本：`demo_traps.py`、`make_figures.py`、`task1/run_task1.py`、`task2/run_task2.py`。`generate_synthetic.py` 是生成器，它用 `--out` 指定**输出**目录（以及 `--seed` / `--vehicles` / `--report-calibration`）。`check_claims.py` 用 `--json` 读 `metrics.json`。
+
+装了 `make` 的话也可以一条命令跑完：`make all`（等价于上面 1~6 步）。
 
 ---
 
