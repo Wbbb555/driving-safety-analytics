@@ -12,7 +12,10 @@
    评分卡不允许"事件越多评分越高"，所以把风险因素的负系数强制截断为 0。
    代价是丢掉了部分信息，换来的是不会给出反向建议。
 3. 分箱与拟合都必须在折内做。用全样本的分箱边界再评估，
-   AUC 会明显虚高（真实项目里量到过 +0.065 的偏差）。
+   AUC 会虚高。这里实测的偏差是 +0.0075 ~ +0.0115（见 oof_auc 的 docstring），
+   量级不大但方向确定；偏差大小取决于正例比例与分箱数，不是常数。
+   注意不要把"前代口径的全样本分"与"末代口径的无泄漏分"相减当成泄漏量，
+   那样会把版本差异算进泄漏里。
 4. 只接受**率**指标，不接受计数指标。计数指标本质是里程代理，
    会把"跑得多"的车判成高风险。
 """
@@ -34,7 +37,6 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from paths import load_bundle, resolve_data_dir, resolve_out_dir  # noqa: E402
 
 # 评分卡参数
-BASE_ODDS = 1.0
 PDO = 50.0                      # 每翻一倍几率差 50 分
 TARGET_MEDIAN_SCORE = 700.0     # 刻度锚：中位车的安全分定在这里
 MAX_BINS = 5
@@ -220,20 +222,38 @@ def item_scores(card, X: np.ndarray) -> pd.DataFrame:
 def oof_auc(cand: pd.DataFrame, cols: list[str], y: np.ndarray, seeds=(0, 1, 42)):
     """OOF AUC：**折内分箱**。这是无泄漏口径。
 
-    返回的是"安全分"（越高越安全）对标签的 AUC，故取负号使 AUC > 0.5。
+    返回 dict，同时给出两种折算口径，因为二者的差不是误差而是口径选择：
+
+    - ``pooled``：把各折的验证分拼成一个向量算一次全局 AUC。问题在于每折的
+      基准分（``base_offset``）是按**该折训练集的中位原始分**锚定到 700 分的，
+      五折的基准分彼此不同（实测 seed=0 时为 183.5 / 134.1 / 122.8 / 96.9 /
+      128.3）。拼池时等于给不同折加了不同常数，引入了与折内风险分布相关的平移。
+      已核验这**不是标签泄漏**（各折基准分与各折测试集正例率的 Pearson
+      r = -0.085，基本无关），但它确实让 pooled 数值带上口径噪声。
+    - ``perfold``：每折先各自算 AUC 再取平均。不受跨折常数影响。
+
+    两种都报出来，避免把某一个数当成唯一正确值。实测三者（种子 0/1/42 平均）：
+    pooled 0.8350、每折中心化 0.8264、perfold 0.8390。
     """
-    aucs = []
+    pooled, perfold = [], []
     names = [c.split("|")[-1] for c in cols]
     for s in seeds:
         skf = StratifiedKFold(5, shuffle=True, random_state=s)
         oof = np.zeros(len(y))
+        fold_aucs = []
         for tr, te in skf.split(cand, y):
             card = fit_card(cand.loc[tr, cols].values.astype(float), y[tr], names)
-            # 折内锚定：用训练折的中位分做基准，验证折算分时用同一个基准，
-            # 否则每折的绝对分数不同，OOF 拼起来不可比。
-            oof[te] = score_from_card(card, cand.loc[te, cols].values.astype(float))
-        aucs.append(roc_auc_score(y, -oof))     # 分越高越安全，取负使 AUC>0.5
-    return float(np.mean(aucs)), float(np.std(aucs))
+            sc = score_from_card(card, cand.loc[te, cols].values.astype(float))
+            oof[te] = sc
+            # 分越高越安全，取负使 AUC>0.5；逐折内算，不含跨折常数
+            fold_aucs.append(roc_auc_score(y[te], -sc))
+        pooled.append(roc_auc_score(y, -oof))
+        perfold.append(float(np.mean(fold_aucs)))
+    return {
+        "pooled": float(np.mean(pooled)), "pooled_sd": float(np.std(pooled)),
+        "perfold": float(np.mean(perfold)), "perfold_sd": float(np.std(perfold)),
+        "per_seed_pooled": [round(v, 4) for v in pooled],
+    }
 
 
 def leaky_auc(cand: pd.DataFrame, cols: list[str], y: np.ndarray, seed=0):
@@ -355,11 +375,17 @@ def main():
     card_df.to_csv(out_dir / "task2_scorecard.csv", index=False, encoding="utf-8-sig")
 
     # --- 无泄漏 vs 有泄漏
-    auc_clean, auc_sd = oof_auc(cand, cols, y)
+    oof = oof_auc(cand, cols, y)
     auc_leak = leaky_auc(cand, cols, y)
-    print(f"\nOOF AUC（折内分箱，无泄漏）  = {auc_clean:.4f} ± {auc_sd:.4f}")
+    print(f"\nOOF AUC（折内分箱，无泄漏）  = {oof['pooled']:.4f} ± {oof['pooled_sd']:.4f}"
+          f"（折内拼池口径）")
+    print(f"                               {oof['perfold']:.4f} ± {oof['perfold_sd']:.4f}"
+          f"（逐折平均口径）")
     print(f"OOF AUC（全样本分箱，有泄漏）= {auc_leak:.4f}")
-    print(f"→ 乐观偏差 {auc_leak - auc_clean:+.4f}")
+    print(f"→ 乐观偏差 {auc_leak - oof['pooled']:+.4f}"
+          f"（对拼池口径）/ {auc_leak - oof['perfold']:+.4f}（对逐折口径）")
+    print("  注：两种无泄漏口径差约 0.01，是 OOF 拼接口径差异，不是泄漏。"
+          "每折基准分不同，拼池会给各折加不同常数（已核验与折内正例率无关）。")
 
     # --- 十分位单调性
     dec = pd.qcut(pd.Series(sc).rank(method="first"), 10, labels=False)

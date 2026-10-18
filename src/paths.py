@@ -50,9 +50,3 @@ def load_bundle(data_dir: Path) -> dict[str, pd.DataFrame]:
         "imu_daily": pd.read_parquet(d / "imu_daily.parquet"),
         "imu_events_daily": pd.read_parquet(d / "imu_events_daily.parquet"),
     }
-
-
-def require(bundle: dict, name: str) -> pd.DataFrame:
-    if name not in bundle or bundle[name] is None:
-        raise FileNotFoundError(f"缺少数据表：{name}，请先运行 scripts/generate_synthetic.py")
-    return bundle[name]

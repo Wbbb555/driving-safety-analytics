@@ -1,7 +1,15 @@
 # 实测通过的版本（Python 3.12.14 / Windows 11）
-# 其他版本大概率也能跑，但复现报告里的数字在这套版本上验证过。
+# 其他版本大概率也能跑，但 README 与 docs/findings.md 里的数字在这套版本上验证过。
+# 只跑四个主脚本的话，numpy/pandas/scikit-learn/scipy/pyarrow 就够了；
+# matplotlib 只用于 scripts/make_figures.py，pytest 只用于 tests/。
 numpy>=2.0,<3
 pandas>=2.2,<4
 scikit-learn>=1.4,<2
 scipy>=1.11,<2
 pyarrow>=15,<30
+
+# 可选：生成图表
+matplotlib>=3.8,<4
+
+# 可选：跑单元测试
+pytest>=8,<10

@@ -20,6 +20,7 @@
 
 from __future__ import annotations
 
+import argparse
 import sys
 from pathlib import Path
 
@@ -32,6 +33,12 @@ from sklearn.metrics import roc_auc_score
 from sklearn.model_selection import StratifiedKFold
 
 ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT / "src"))
+from paths import resolve_data_dir  # noqa: E402
+
+# 与 src/ 下的脚本共用同一套路径解析：命令行 --data > 环境变量 DSA_DATA_DIR > 仓库默认。
+# 早期版本这里写死 ROOT/"data"/"synthetic"，导致 README 里「不需要改路径」这句话
+# 对本脚本并不成立——数据换了目录就得改代码。
 DATA = ROOT / "data" / "synthetic"
 RNG = np.random.default_rng(42)
 
@@ -126,7 +133,12 @@ def trap_exposure(lab, cand, fev):
     print("  这就是为什么最终评分体系全部改用率而不是计数。")
     print()
     return {"auc_km": auc_km, "auc_count": auc_count, "auc_resid": auc_resid,
-            "auc_pure": roc_auc_score(y, n_points)}
+            "auc_pure": roc_auc_score(y, n_points),
+            "auc_pure_resid_loglog": r_pure_log,
+            "auc_pure_resid_rawlog": r_pure_raw,
+            "spearman_pure_km": float(stats.spearmanr(n_points, km).statistic),
+            "spearman_count_km": float(stats.spearmanr(total_events, km).statistic),
+            "best_rate": rate_best[0], "best_rate_auc": float(rate_best[1])}
 
 
 # ---------------------------------------------------------------- T2 特征选择偏差
@@ -337,7 +349,7 @@ def trap_collinearity(lab, cand):
         print("    别把某一次拟合的符号当成「该指标有害 / 有益」的证据。")
     print()
     return {"vif": dict(zip(short, vif)), "coef": dict(zip(short, coef_all)),
-            "anomalies": [short[i] for i in anom]}
+            "stab": stab, "anomalies": [short[i] for i in anom]}
 
 
 def standardize(X):
@@ -453,8 +465,17 @@ def cv_auc(X, y, seed=0):
 
 
 def main():
+    global DATA
+    ap = argparse.ArgumentParser(description="四个方法论陷阱的量化复现")
+    ap.add_argument("--data", default=None, help="数据目录（默认 data/synthetic）")
+    ap.add_argument("--json", default=None,
+                    help="把全部指标写成 JSON（用于 CI 比对与画图）")
+    args = ap.parse_args()
+    DATA = resolve_data_dir(args.data)
+
     if not (DATA / "labels.csv").exists():
-        print("找不到合成数据，请先运行：python scripts/generate_synthetic.py")
+        print(f"找不到合成数据（{DATA}），请先运行：")
+        print("  python scripts/generate_synthetic.py")
         sys.exit(1)
 
     lab, cand, fev, prof = load()
@@ -467,15 +488,30 @@ def main():
     print("=" * 74)
     print()
 
-    trap_exposure(lab, cand, fev)
-    trap_collinearity(lab, cand)
-    trap_feature_selection(lab, cand, prof)
-    trap_binning_leak(lab, cand)
+    out = {}
+    out["T1_exposure"] = trap_exposure(lab, cand, fev)
+    out["T3_collinearity"] = trap_collinearity(lab, cand)
+    out["T2_feature_selection"] = trap_feature_selection(lab, cand, prof)
+    out["T4_binning_leak"] = trap_binning_leak(lab, cand)
+    out["meta"] = {
+        "n_vehicles": int(len(lab)),
+        "n_positive": int(lab["label"].sum()),
+        "positive_rate": float(lab["label"].mean()),
+        "data_dir": str(DATA),
+    }
+
+    if args.json:
+        import json
+        dst = Path(args.json).expanduser().resolve()
+        dst.parent.mkdir(parents=True, exist_ok=True)
+        dst.write_text(json.dumps(out, ensure_ascii=False, indent=2), encoding="utf-8")
+        print(f"指标已写入 {dst}")
 
     print("=" * 74)
     print("四个陷阱的共同点：它们都不会报错。")
     print("代码跑得通、AUC 还挺高、图表也好看——错的是结论。")
     print("=" * 74)
+    return out
 
 
 if __name__ == "__main__":

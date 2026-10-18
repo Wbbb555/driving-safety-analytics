@@ -1,0 +1,13 @@
+# 统一换行符：仓库内存 LF，Windows 检出也不转 CRLF。
+# 理由：CI 跑在 Linux 上，混用换行会让 diff 噪音变大、也会让
+# 某些工具（如 shell 脚本、Makefile）在跨平台时出问题。
+* text=auto eol=lf
+
+# 二进制文件不做换行转换，否则 parquet / png 会被改坏。
+*.png binary
+*.parquet binary
+*.pkl binary
+*.gz binary
+
+# 中文 CSV 输出用 utf-8-sig，不应被当作纯文本改动。
+*.csv text eol=lf

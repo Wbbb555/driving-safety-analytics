@@ -163,9 +163,16 @@ def main():
     print(f"  {'秩融合':8s} {auc_fused:.4f}")
 
     from scipy.stats import rankdata
+    # 秩融合的输出是"秩均值"（1.0 ~ n），不是概率。直接叫 risk_prob 会误导，
+    # 所以分成两列：risk_score 保留秩分原值，risk_prob 只做线性映射到 [0,1]。
+    # risk_prob 的含义是"该车在车队中的相对位置"，不是校准后的出险概率——
+    # 要得到真正的概率需要做校准（Platt / isotonic），本仓库没有做。
+    n = len(fused)
+    risk_prob = (fused - 1.0) / max(n - 1, 1)
     pred = pd.DataFrame({
         "gpsno": df["gpsno"],
-        "risk_prob": fused,
+        "risk_score": fused,
+        "risk_prob": risk_prob,
         "risk_rank": rankdata(-fused, method="ordinal").astype(int),
     }).sort_values("risk_rank")
     # 正类比例与训练集正例率一致
