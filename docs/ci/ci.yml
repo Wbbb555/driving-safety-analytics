@@ -1,0 +1,57 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      # 五个脚本都会自己建目录，但在这里先清空能确保「从零可复现」。
+      - name: Clean generated artifacts
+        run: |
+          rm -rf data/synthetic outputs
+          mkdir -p outputs
+
+      - name: 1. Generate synthetic data
+        run: python scripts/generate_synthetic.py
+
+      - name: 2. Quantify the five traps
+        run: python scripts/demo_traps.py --json outputs/metrics.json
+
+      - name: 3. Task 1 — risk prediction
+        run: python src/task1/run_task1.py
+
+      - name: 4. Task 2 — scorecard
+        run: python src/task2/run_task2.py
+
+      - name: 5. Invariant tests
+        run: python -m pytest tests -q
+
+      # 数字断言：README 里的关键结论如果被改动破坏，这里必须红。
+      # 只钉「性质」与小数量级的量级，不钉精确 AUC——精确值会随
+      # sklearn/numpy 版本漂移，钉死了过几天就会红，然后被人跳过。
+      - name: 6. Assert published conclusions still hold
+        run: python scripts/check_claims.py

@@ -284,6 +284,32 @@ outputs/                   运行产物
 
 > 钉精确值（如 `auc_km == 0.8074291300097751`）是错的：CI 会在每次依赖升级时变红，然后被加 `skip`，从此失去意义。所以这里的阈值都留了余量（如残差 AUC 判 `|x−0.5| < 0.06`）。
 
+### 关于 CI：为什么工作流不在 `.github/workflows/`
+
+工作流定义放在 **[docs/ci/ci.yml](docs/ci/ci.yml)**，而不是 `.github/workflows/ci.yml`。
+
+原因很实际：往 `.github/workflows/` 写文件需要 GitHub token 带 `workflow` scope，我这次用的细粒度 token 没开这个权限，`git push` 直接被 GitHub 拒绝：
+
+```
+! [remote rejected] main -> main (refusing to allow a Personal Access Token
+  to create or update workflow `.github/workflows/ci.yml` without `workflow` scope)
+```
+
+不想为了一个配置文件去要更高的权限，所以先放在 `docs/ci/`，**内容与可直接使用的版本完全一致**。
+
+要启用它，二选一：
+
+```bash
+# 方式一：浏览器里新建文件，把 docs/ci/ci.yml 的内容粘进
+#   .github/workflows/ci.yml
+
+# 方式二：给 token 补 workflow scope 后
+mkdir -p .github/workflows && cp docs/ci/ci.yml .github/workflows/ci.yml
+git add .github/workflows/ci.yml && git commit -m "启用 CI" && git push
+```
+
+CI 做的事：Python 3.11 / 3.12 两档矩阵，**先清空 `data/synthetic` 与 `outputs`**，再从零跑生成器 → 陷阱演示 → 任务一 → 任务二 → 17 项测试 → 22 条结论断言。清空这一步是关键，否则 CI 可能一直在用仓库里已提交的产物，检查不出「生成器已经跑不出这份数据」这类退化。
+
 ## 脱敏工具
 
 `scripts/anonymize.py` 把真实车号换成 `VEH_cd81d4c3` 这类代号，保持跨文件一致性，且不可逆：
