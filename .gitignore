@@ -1,0 +1,12 @@
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+.venv/
+venv/
+.env
+
+# 数据与产物：合成数据本身体积不大（约 12MB），默认提交，
+# 这样别人 clone 下来不用跑生成器就能直接看结果。
+# 如果你重新生成了更大的数据，取消下面两行的注释。
+# data/synthetic/*.parquet
+# outputs/*.csv

@@ -1,0 +1,758 @@
+{
+ "event_daily": {
+  "columns": [
+   {
+    "name": "gpsno",
+    "dtype": "str"
+   },
+   {
+    "name": "date",
+    "dtype": "str"
+   },
+   {
+    "name": "accident",
+    "dtype": "float64"
+   },
+   {
+    "name": "blind_zone",
+    "dtype": "float64"
+   },
+   {
+    "name": "camera",
+    "dtype": "float64"
+   },
+   {
+    "name": "collision_warn",
+    "dtype": "float64"
+   },
+   {
+    "name": "distraction",
+    "dtype": "float64"
+   },
+   {
+    "name": "fatigue",
+    "dtype": "float64"
+   },
+   {
+    "name": "lane",
+    "dtype": "float64"
+   },
+   {
+    "name": "nearmiss",
+    "dtype": "float64"
+   },
+   {
+    "name": "smoke",
+    "dtype": "float64"
+   },
+   {
+    "name": "speeding",
+    "dtype": "float64"
+   },
+   {
+    "name": "ev_night",
+    "dtype": "int32"
+   },
+   {
+    "name": "ev_total",
+    "dtype": "int64"
+   },
+   {
+    "name": "ev_speed_mean",
+    "dtype": "float64"
+   },
+   {
+    "name": "ev_speed_max",
+    "dtype": "int64"
+   }
+  ],
+  "n_rows_real": 27789
+ },
+ "traj_daily": {
+  "columns": [
+   {
+    "name": "gpsno",
+    "dtype": "str"
+   },
+   {
+    "name": "date",
+    "dtype": "str"
+   },
+   {
+    "name": "n_points",
+    "dtype": "int64"
+   },
+   {
+    "name": "n_moving",
+    "dtype": "int64"
+   },
+   {
+    "name": "dist_km",
+    "dtype": "float64"
+   },
+   {
+    "name": "run_time_h",
+    "dtype": "float64"
+   },
+   {
+    "name": "spd_sum",
+    "dtype": "float64"
+   },
+   {
+    "name": "spd_sq_sum",
+    "dtype": "float64"
+   },
+   {
+    "name": "spd_bin_0",
+    "dtype": "float64"
+   },
+   {
+    "name": "spd_bin_5",
+    "dtype": "float64"
+   },
+   {
+    "name": "spd_bin_10",
+    "dtype": "float64"
+   },
+   {
+    "name": "spd_bin_15",
+    "dtype": "float64"
+   },
+   {
+    "name": "spd_bin_20",
+    "dtype": "float64"
+   },
+   {
+    "name": "spd_bin_25",
+    "dtype": "float64"
+   },
+   {
+    "name": "spd_bin_30",
+    "dtype": "float64"
+   },
+   {
+    "name": "spd_bin_35",
+    "dtype": "float64"
+   },
+   {
+    "name": "spd_bin_40",
+    "dtype": "float64"
+   },
+   {
+    "name": "spd_bin_45",
+    "dtype": "float64"
+   },
+   {
+    "name": "spd_bin_50",
+    "dtype": "float64"
+   },
+   {
+    "name": "spd_bin_55",
+    "dtype": "float64"
+   },
+   {
+    "name": "spd_bin_60",
+    "dtype": "float64"
+   },
+   {
+    "name": "spd_bin_65",
+    "dtype": "float64"
+   },
+   {
+    "name": "spd_bin_70",
+    "dtype": "float64"
+   },
+   {
+    "name": "spd_bin_75",
+    "dtype": "float64"
+   },
+   {
+    "name": "spd_bin_80",
+    "dtype": "float64"
+   },
+   {
+    "name": "spd_bin_85",
+    "dtype": "float64"
+   },
+   {
+    "name": "spd_bin_90",
+    "dtype": "float64"
+   },
+   {
+    "name": "spd_bin_95",
+    "dtype": "float64"
+   },
+   {
+    "name": "spd_bin_100",
+    "dtype": "float64"
+   },
+   {
+    "name": "spd_bin_105",
+    "dtype": "float64"
+   },
+   {
+    "name": "spd_bin_110",
+    "dtype": "float64"
+   },
+   {
+    "name": "spd_bin_115",
+    "dtype": "float64"
+   },
+   {
+    "name": "spd_bin_120",
+    "dtype": "float64"
+   },
+   {
+    "name": "spd_bin_125",
+    "dtype": "float64"
+   },
+   {
+    "name": "spd_bin_130",
+    "dtype": "float64"
+   },
+   {
+    "name": "hr_mv_0",
+    "dtype": "float64"
+   },
+   {
+    "name": "hr_all_0",
+    "dtype": "float64"
+   },
+   {
+    "name": "hr_mv_1",
+    "dtype": "float64"
+   },
+   {
+    "name": "hr_all_1",
+    "dtype": "float64"
+   },
+   {
+    "name": "hr_mv_2",
+    "dtype": "float64"
+   },
+   {
+    "name": "hr_all_2",
+    "dtype": "float64"
+   },
+   {
+    "name": "hr_mv_3",
+    "dtype": "float64"
+   },
+   {
+    "name": "hr_all_3",
+    "dtype": "float64"
+   },
+   {
+    "name": "hr_mv_4",
+    "dtype": "float64"
+   },
+   {
+    "name": "hr_all_4",
+    "dtype": "float64"
+   },
+   {
+    "name": "hr_mv_5",
+    "dtype": "float64"
+   },
+   {
+    "name": "hr_all_5",
+    "dtype": "float64"
+   },
+   {
+    "name": "hr_mv_6",
+    "dtype": "float64"
+   },
+   {
+    "name": "hr_all_6",
+    "dtype": "float64"
+   },
+   {
+    "name": "hr_mv_7",
+    "dtype": "float64"
+   },
+   {
+    "name": "hr_all_7",
+    "dtype": "float64"
+   },
+   {
+    "name": "hr_mv_8",
+    "dtype": "float64"
+   },
+   {
+    "name": "hr_all_8",
+    "dtype": "float64"
+   },
+   {
+    "name": "hr_mv_9",
+    "dtype": "float64"
+   },
+   {
+    "name": "hr_all_9",
+    "dtype": "float64"
+   },
+   {
+    "name": "hr_mv_10",
+    "dtype": "float64"
+   },
+   {
+    "name": "hr_all_10",
+    "dtype": "float64"
+   },
+   {
+    "name": "hr_mv_11",
+    "dtype": "float64"
+   },
+   {
+    "name": "hr_all_11",
+    "dtype": "float64"
+   },
+   {
+    "name": "hr_mv_12",
+    "dtype": "float64"
+   },
+   {
+    "name": "hr_all_12",
+    "dtype": "float64"
+   },
+   {
+    "name": "hr_mv_13",
+    "dtype": "float64"
+   },
+   {
+    "name": "hr_all_13",
+    "dtype": "float64"
+   },
+   {
+    "name": "hr_mv_14",
+    "dtype": "float64"
+   },
+   {
+    "name": "hr_all_14",
+    "dtype": "float64"
+   },
+   {
+    "name": "hr_mv_15",
+    "dtype": "float64"
+   },
+   {
+    "name": "hr_all_15",
+    "dtype": "float64"
+   },
+   {
+    "name": "hr_mv_16",
+    "dtype": "float64"
+   },
+   {
+    "name": "hr_all_16",
+    "dtype": "float64"
+   },
+   {
+    "name": "hr_mv_17",
+    "dtype": "float64"
+   },
+   {
+    "name": "hr_all_17",
+    "dtype": "float64"
+   },
+   {
+    "name": "hr_mv_18",
+    "dtype": "float64"
+   },
+   {
+    "name": "hr_all_18",
+    "dtype": "float64"
+   },
+   {
+    "name": "hr_mv_19",
+    "dtype": "float64"
+   },
+   {
+    "name": "hr_all_19",
+    "dtype": "float64"
+   },
+   {
+    "name": "hr_mv_20",
+    "dtype": "float64"
+   },
+   {
+    "name": "hr_all_20",
+    "dtype": "float64"
+   },
+   {
+    "name": "hr_mv_21",
+    "dtype": "float64"
+   },
+   {
+    "name": "hr_all_21",
+    "dtype": "float64"
+   },
+   {
+    "name": "hr_mv_22",
+    "dtype": "float64"
+   },
+   {
+    "name": "hr_all_22",
+    "dtype": "float64"
+   },
+   {
+    "name": "hr_mv_23",
+    "dtype": "float64"
+   },
+   {
+    "name": "hr_all_23",
+    "dtype": "float64"
+   }
+  ],
+  "n_rows_real": 28827
+ },
+ "imu_daily": {
+  "columns": [
+   {
+    "name": "gpsno",
+    "dtype": "str"
+   },
+   {
+    "name": "date",
+    "dtype": "str"
+   },
+   {
+    "name": "n",
+    "dtype": "int64"
+   },
+   {
+    "name": "n_spd_valid",
+    "dtype": "int64"
+   },
+   {
+    "name": "n_stat",
+    "dtype": "int64"
+   },
+   {
+    "name": "n_mov",
+    "dtype": "int64"
+   },
+   {
+    "name": "dist_proxy_m",
+    "dtype": "float64"
+   },
+   {
+    "name": "ems_sum",
+    "dtype": "float64"
+   },
+   {
+    "name": "ems_valid_n",
+    "dtype": "int64"
+   },
+   {
+    "name": "sum_accel_x_raw",
+    "dtype": "float64"
+   },
+   {
+    "name": "sq_accel_x_raw",
+    "dtype": "float64"
+   },
+   {
+    "name": "sum_accel_y_raw",
+    "dtype": "float64"
+   },
+   {
+    "name": "sq_accel_y_raw",
+    "dtype": "float64"
+   },
+   {
+    "name": "sum_accel_z_raw",
+    "dtype": "float64"
+   },
+   {
+    "name": "sq_accel_z_raw",
+    "dtype": "float64"
+   },
+   {
+    "name": "sum_gyro_x_raw",
+    "dtype": "float64"
+   },
+   {
+    "name": "sq_gyro_x_raw",
+    "dtype": "float64"
+   },
+   {
+    "name": "sum_gyro_y_raw",
+    "dtype": "float64"
+   },
+   {
+    "name": "sq_gyro_y_raw",
+    "dtype": "float64"
+   },
+   {
+    "name": "sum_gyro_z_raw",
+    "dtype": "float64"
+   },
+   {
+    "name": "sq_gyro_z_raw",
+    "dtype": "float64"
+   },
+   {
+    "name": "stat_sum_accel_x_raw",
+    "dtype": "float64"
+   },
+   {
+    "name": "stat_sum_accel_y_raw",
+    "dtype": "float64"
+   },
+   {
+    "name": "stat_sum_accel_z_raw",
+    "dtype": "float64"
+   },
+   {
+    "name": "stat_sum_gyro_x_raw",
+    "dtype": "float64"
+   },
+   {
+    "name": "stat_sum_gyro_y_raw",
+    "dtype": "float64"
+   },
+   {
+    "name": "stat_sum_gyro_z_raw",
+    "dtype": "float64"
+   },
+   {
+    "name": "dvdt_cross_accel_x_raw",
+    "dtype": "float64"
+   },
+   {
+    "name": "dvdt_cross_accel_y_raw",
+    "dtype": "float64"
+   },
+   {
+    "name": "dvdt_cross_accel_z_raw",
+    "dtype": "float64"
+   },
+   {
+    "name": "dvdt_sq",
+    "dtype": "float64"
+   },
+   {
+    "name": "dm_gt_0.10",
+    "dtype": "int64"
+   },
+   {
+    "name": "dm_gt_0.15",
+    "dtype": "int64"
+   },
+   {
+    "name": "dm_gt_0.20",
+    "dtype": "int64"
+   },
+   {
+    "name": "dm_gt_0.30",
+    "dtype": "int64"
+   },
+   {
+    "name": "dm_gt_0.40",
+    "dtype": "int64"
+   },
+   {
+    "name": "gy_gt_15",
+    "dtype": "int64"
+   },
+   {
+    "name": "gy_gt_25",
+    "dtype": "int64"
+   },
+   {
+    "name": "gy_gt_40",
+    "dtype": "int64"
+   },
+   {
+    "name": "gy_gt_60",
+    "dtype": "int64"
+   },
+   {
+    "name": "stat_gy_mag_sq",
+    "dtype": "float64"
+   },
+   {
+    "name": "spd_gps_ems_absdiff",
+    "dtype": "float64"
+   },
+   {
+    "name": "n_gps_ems_both",
+    "dtype": "int64"
+   },
+   {
+    "name": "dm_bin_-0.20",
+    "dtype": "float64"
+   },
+   {
+    "name": "dm_bin_-0.15",
+    "dtype": "float64"
+   },
+   {
+    "name": "dm_bin_-0.10",
+    "dtype": "float64"
+   },
+   {
+    "name": "dm_bin_-0.05",
+    "dtype": "float64"
+   },
+   {
+    "name": "dm_bin_-0.00",
+    "dtype": "float64"
+   },
+   {
+    "name": "dm_bin_0.05",
+    "dtype": "float64"
+   },
+   {
+    "name": "dm_bin_0.10",
+    "dtype": "float64"
+   },
+   {
+    "name": "dm_bin_0.15",
+    "dtype": "float64"
+   },
+   {
+    "name": "dm_bin_0.20",
+    "dtype": "float64"
+   },
+   {
+    "name": "dm_bin_0.25",
+    "dtype": "float64"
+   },
+   {
+    "name": "dm_bin_0.30",
+    "dtype": "float64"
+   },
+   {
+    "name": "dm_bin_0.35",
+    "dtype": "float64"
+   },
+   {
+    "name": "dm_bin_0.40",
+    "dtype": "float64"
+   },
+   {
+    "name": "dm_bin_0.45",
+    "dtype": "float64"
+   },
+   {
+    "name": "dm_bin_0.50",
+    "dtype": "float64"
+   },
+   {
+    "name": "dm_bin_0.55",
+    "dtype": "float64"
+   },
+   {
+    "name": "dm_bin_0.60",
+    "dtype": "float64"
+   },
+   {
+    "name": "dm_bin_0.65",
+    "dtype": "float64"
+   },
+   {
+    "name": "dm_bin_0.70",
+    "dtype": "float64"
+   },
+   {
+    "name": "dm_bin_0.75",
+    "dtype": "float64"
+   },
+   {
+    "name": "dm_bin_0.80",
+    "dtype": "float64"
+   },
+   {
+    "name": "dm_bin_0.85",
+    "dtype": "float64"
+   },
+   {
+    "name": "dm_bin_0.90",
+    "dtype": "float64"
+   },
+   {
+    "name": "dm_bin_0.95",
+    "dtype": "float64"
+   },
+   {
+    "name": "dm_bin_1.00",
+    "dtype": "float64"
+   },
+   {
+    "name": "dm_bin_1.05",
+    "dtype": "float64"
+   },
+   {
+    "name": "dm_bin_1.10",
+    "dtype": "float64"
+   },
+   {
+    "name": "dm_bin_1.15",
+    "dtype": "float64"
+   },
+   {
+    "name": "dm_bin_1.20",
+    "dtype": "float64"
+   },
+   {
+    "name": "dm_bin_1.25",
+    "dtype": "float64"
+   }
+  ],
+  "n_rows_real": 14836
+ },
+ "imu_events_daily": {
+  "columns": [
+   {
+    "name": "gpsno",
+    "dtype": "str"
+   },
+   {
+    "name": "date",
+    "dtype": "str"
+   },
+   {
+    "name": "harsh_brake",
+    "dtype": "int64"
+   },
+   {
+    "name": "harsh_accel",
+    "dtype": "int64"
+   },
+   {
+    "name": "sharp_turn",
+    "dtype": "int64"
+   },
+   {
+    "name": "swerve",
+    "dtype": "int64"
+   },
+   {
+    "name": "collision_like",
+    "dtype": "int64"
+   },
+   {
+    "name": "rollover_like",
+    "dtype": "int64"
+   },
+   {
+    "name": "imu_mov_n",
+    "dtype": "int64"
+   },
+   {
+    "name": "al_sq",
+    "dtype": "float64"
+   },
+   {
+    "name": "alat_sq",
+    "dtype": "float64"
+   },
+   {
+    "name": "yaw_sq",
+    "dtype": "float64"
+   }
+  ],
+  "n_rows_real": 10986
+ }
+}
