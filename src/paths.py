@@ -1,8 +1,7 @@
 """路径与数据装载。
 
-原项目里几乎所有脚本都把数据路径写死成 `D:\\browserdownload\\...`，
-换一台机器就跑不动。这里统一改成「命令行参数 + 环境变量」，
-默认值指向仓库内的 data/synthetic。
+原项目的脚本把数据路径写死在 D:\\browserdownload\\... 里，换台机器就跑不了。
+这里改成参数加环境变量，默认指向仓库内的 data/synthetic。
 """
 from __future__ import annotations
 
@@ -34,10 +33,10 @@ def resolve_out_dir(arg: str | None = None) -> Path:
 
 
 def load_bundle(data_dir: Path) -> dict[str, pd.DataFrame]:
-    """一次性读入合成数据集的全部分表。
+    """一次读进全部 8 张分表。
 
-    所有含车号的表都以字符串读入。这一点在真实项目里踩过坑：
-    pandas 推断类型会把 8 位车号变成 int64，跨表 merge 时静默错配。
+    含车号的列一律按字符串读。真实项目踩过：pandas 推断类型会把 8 位车号变成
+    int64，跨表 merge 时静默错配，一条都不报。
     """
     d = data_dir
     return {

@@ -1,12 +1,10 @@
-"""生成 README 与文档要用的图。
+"""生成文档里用的图。
 
-设计原则：每张图只讲一件事，且必须能被一句 caption 说清。
-画不出"这图说明了什么"的图就不画。
+一张图只讲一件事，一句 caption 说不清就别画。
 
-跑法：
     python scripts/make_figures.py
 
-输出到 docs/figures/。全部基于 data/synthetic 里的合成数据。
+输出到 docs/figures/，数据来自 data/synthetic。
 """
 from __future__ import annotations
 
@@ -130,12 +128,11 @@ def fig_selection_bias(out: Path, metrics: dict):
 
 
 def fig_sign_stability(out: Path, metrics: dict):
-    """符号稳定性：哪些指标的系数符号一换种子就翻。
+    """符号稳定性：哪些指标的系数换个种子就翻。
 
-    注意 demo_traps 里 ``stab`` 记的是「系数为**负**的重抽样占比」，
-    而负系数在这里意味着反常识方向（率越高反而越安全）。
-    所以「符合常识方向」的占比是 ``1 - stab``。第一版直接拿 stab 当
-    正向占比画，图和 README 表格正好相反——这种错误不会报错，只会静默说谎。
+    demo_traps 里 stab 记的是「系数为负的重抽样占比」，负=反常识方向，所以
+    符合常识的占比是 1 - stab。第一版直接拿 stab 画，图跟 README 表格正好相反，
+    不报错，只是静默说谎。
     """
     stab = metrics["T3_collinearity"]["stab"]
     names = list(stab.keys())
